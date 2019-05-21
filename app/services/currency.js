@@ -19,4 +19,4 @@ exports.convert = (from, to) =>
   })
     .then(res => res.data)
     .then(get(askPricePath))
-    .catch(currencyError);
+    .catch(err => Promise.reject(currencyError(err)));

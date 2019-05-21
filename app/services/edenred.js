@@ -10,4 +10,4 @@ exports.getBalanceByCardNumber = cardNumber =>
   })
     .then(res => res.data.match(/\d+.\d+/))
     .then(([value]) => Number(value))
-    .catch(edenredError);
+    .catch(err => Promise.reject(edenredError(err)));
