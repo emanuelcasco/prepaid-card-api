@@ -26,13 +26,10 @@ const assignObject = (target, source) => {
 };
 
 const config = {
+  edenredUrl: process.env.EDENRED_API_URL,
+  currencyUrl: process.env.CURRENCY_API_URL,
+  currencyKey: process.env.CURRENCY_API_KEY,
   common: {
-    database: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD
-    },
     api: {
       bodySizeLimit: process.env.API_BODY_SIZE_LIMIT,
       parameterLimit: process.env.API_PARAMETER_LIMIT,

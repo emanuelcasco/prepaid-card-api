@@ -1,8 +1,8 @@
-// const controller = require('./controllers/controller');
+const balanceController = require('./controllers/balance');
+const { fetchAvailableCurrenciesPrice } = require('./middlewares/currency');
+
 const { healthCheck } = require('./controllers/healthCheck');
 exports.init = app => {
   app.get('/health', healthCheck);
-  // app.get('/endpoint/get/path', [], controller.methodGET);
-  // app.put('/endpoint/put/path', [], controller.methodPUT);
-  // app.post('/endpoint/post/path', [], controller.methodPOST);
+  app.get('/balance/:cardNumber', [fetchAvailableCurrenciesPrice], balanceController.getBalanceByCardNumber);
 };

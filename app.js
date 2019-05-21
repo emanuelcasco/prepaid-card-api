@@ -1,12 +1,14 @@
-const express = require('express'),
-  bodyParser = require('body-parser'),
-  morgan = require('morgan'),
-  path = require('path'),
-  config = require('./config'),
-  routes = require('./app/routes'),
-  errors = require('./app/middlewares/errors'),
-  DEFAULT_BODY_SIZE_LIMIT = 1024 * 1024 * 10,
-  DEFAULT_PARAMETER_LIMIT = 10000;
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const { expressMiddleware, expressRequestIdMiddleware } = require('express-wolox-logger');
+
+const config = require('./config');
+const routes = require('./app/routes');
+const errors = require('./app/middlewares/errors');
+
+const DEFAULT_BODY_SIZE_LIMIT = 1024 * 1024 * 10;
+const DEFAULT_PARAMETER_LIMIT = 10000;
 
 const bodyParserJsonConfig = () => ({
   parameterLimit: config.common.api.parameterLimit || DEFAULT_PARAMETER_LIMIT,
@@ -27,13 +29,10 @@ app.use('/docs', express.static(path.join(__dirname, 'docs')));
 app.use(bodyParser.json(bodyParserJsonConfig()));
 app.use(bodyParser.urlencoded(bodyParserUrlencodedConfig()));
 
+app.use(expressRequestIdMiddleware);
+
 if (!config.isTesting) {
-  morgan.token('req-params', req => req.params);
-  app.use(
-    morgan(
-      '[:date[clf]] :remote-addr - Request ":method :url" with params: :req-params. Response status: :status.'
-    )
-  );
+  app.use(expressMiddleware);
 }
 
 routes.init(app);

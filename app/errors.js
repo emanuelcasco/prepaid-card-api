@@ -3,8 +3,11 @@ const internalError = (message, internalCode) => ({
   internalCode
 });
 
-exports.DATABASE_ERROR = 'database_error';
-exports.databaseError = message => internalError(message, exports.DATABASE_ERROR);
+exports.CURRENCY_ERROR = 'currency_error';
+exports.currencyError = message => internalError(message, exports.CURRENCY_ERROR);
+
+exports.EDENRED_ERROR = 'edenred_error';
+exports.edenredError = message => internalError(message, exports.EDENRED_ERROR);
 
 exports.DEFAULT_ERROR = 'default_error';
 exports.defaultError = message => internalError(message, exports.DEFAULT_ERROR);
