@@ -29,6 +29,7 @@ const config = {
   edenredUrl: process.env.EDENRED_API_URL,
   currencyUrl: process.env.CURRENCY_API_URL,
   currencyKey: process.env.CURRENCY_API_KEY,
+  currencyCacheTime: Number(process.env.CURRENCY_CACHE_TIME),
   common: {
     api: {
       bodySizeLimit: process.env.API_BODY_SIZE_LIMIT,
