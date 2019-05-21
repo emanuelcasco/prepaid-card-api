@@ -60,6 +60,7 @@
     "express": "^4.16.2",
     "express-wolox-logger": "0.0.2",
     "jwt-simple": "^0.5.1",
+    "lodash": "^4.17.11",
     "morgan": "^1.9.1",
     "umzug": "^2.1.0",
     "winston": "^2.4.0",
