@@ -1,4 +1,7 @@
 const edenredService = require('../services/edenred');
+const { defaultError } = require('../errors');
+const logger = require('../logger');
+
 const { CURRENCY_PRICE_NAMESPACE, DEFAULT_CURRENCY } = require('../constants');
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -21,6 +24,12 @@ exports.getBalanceByCardNumber = (req, res, next) => {
   return edenredService
     .getBalanceByCardNumber(cardNumber)
     .then(getBalanceByCurrency(prices))
-    .then(fullBalance => res.json(fullBalance))
-    .catch(next);
+    .then(fullBalance => {
+      logger.info('Balance retrieved correctly!');
+      return res.status(200).send(fullBalance);
+    })
+    .catch(err => {
+      logger.error(err);
+      next(defaultError('Cannot access external API'));
+    });
 };

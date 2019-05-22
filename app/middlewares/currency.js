@@ -35,6 +35,9 @@ exports.fetchAvailableCurrenciesPrice = (req, res, next) => {
         logger.info('Currencies fetched from external service and cached!');
         next();
       })
-      .catch(next);
+      .catch(err => {
+        logger.error(err);
+        next(err);
+      });
   }
 };

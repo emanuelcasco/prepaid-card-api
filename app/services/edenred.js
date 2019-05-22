@@ -10,9 +10,10 @@ exports.getBalanceByCardNumber = cardNumber =>
     method: 'GET',
     url: `${edenredUrl}/${cardNumber}`
   })
+    .then(res => res.data)
     .then(res => {
-      logger.info(`Edenred API response: ${JSON.stringify(res.data)}`);
-      const [value] = res.data.match(/\d+.\d+/);
+      logger.info(`Edenred API response: ${JSON.stringify(res)}`);
+      const [value] = res.match(/\d+.\d+/);
       return Number(value);
     })
     .catch(err => Promise.reject(edenredError(err)));
