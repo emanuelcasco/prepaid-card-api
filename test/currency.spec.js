@@ -35,9 +35,7 @@ describe('GET /balance/:creditCard', () => {
           expect(res).toBeTruthy();
           expect(logger.info).toHaveBeenCalledWith('Fetching currencies: ["CLP","USD"]');
           expect(logger.info).toHaveBeenCalledWith('Currencies fetched from external service and cached!');
-          expect(logger.info).toHaveBeenCalledWith(
-            'Edenred API response: "{\\"AvailableBalance\\":10000.5}"'
-          );
+          expect(logger.info).toHaveBeenCalledWith('Edenred API response: "{"AvailableBalance":10000.5}"');
           expect(logger.info).toHaveBeenCalledWith('Balance retrieved correctly!');
           done();
         })

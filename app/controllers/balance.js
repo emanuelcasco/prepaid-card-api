@@ -1,5 +1,4 @@
 const edenredService = require('../services/edenred');
-const { defaultError } = require('../errors');
 const logger = require('../logger');
 
 const { CURRENCY_PRICE_NAMESPACE, DEFAULT_CURRENCY } = require('../constants');
@@ -28,8 +27,5 @@ exports.getBalanceByCardNumber = (req, res, next) => {
       logger.info('Balance retrieved correctly!');
       return res.status(200).send(fullBalance);
     })
-    .catch(err => {
-      logger.error(err);
-      next(defaultError('Cannot access external API'));
-    });
+    .catch(next);
 };
