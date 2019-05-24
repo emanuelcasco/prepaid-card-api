@@ -16,12 +16,13 @@ const fetchCurrencyPrice = currency =>
   currencyService.convert(currency, DEFAULT_CURRENCY).then(price => ({ name: currency, price }));
 
 exports.fetchAvailableCurrenciesPrice = (req, res, next) => {
-  logger.info(`Fetching currencies: ${JSON.stringify(AVAILABLE_CURRENCIES)}`);
+  logger.info(`Fetching currencies: ${AVAILABLE_CURRENCIES}`);
 
   const cachedCurrencies = mcache.get(CURRENCY_CACHE_KEY);
   if (cachedCurrencies) {
     logger.info('Currencies fetched from cache!');
     res[CURRENCY_PRICE_NAMESPACE] = JSON.parse(cachedCurrencies);
+    logger.info(cachedCurrencies);
     next();
   } else {
     Promise.all(AVAILABLE_CURRENCIES.map(fetchCurrencyPrice))
@@ -29,6 +30,7 @@ exports.fetchAvailableCurrenciesPrice = (req, res, next) => {
       .then(currencies => {
         // Save available currencies prices in response and cache
         res[CURRENCY_PRICE_NAMESPACE] = currencies;
+        logger.info(JSON.stringify(currencies));
         mcache.put(CURRENCY_CACHE_KEY, JSON.stringify(currencies), currencyCacheTime, () => {
           logger.info('Currencies cache expired!');
         });

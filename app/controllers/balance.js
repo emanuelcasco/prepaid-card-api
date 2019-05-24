@@ -1,17 +1,13 @@
 const edenredService = require('../services/edenred');
 const logger = require('../logger');
 
+const { formatCurrency } = require('../utils');
 const { CURRENCY_PRICE_NAMESPACE, DEFAULT_CURRENCY } = require('../constants');
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-});
 
 const getBalanceByCurrency = prices => edenredBalance => {
   const balance = Object.keys(prices).reduce(
-    (accum, key) => ({ ...accum, [key]: formatter.format(edenredBalance / prices[key]) }),
-    { [DEFAULT_CURRENCY]: formatter.format(edenredBalance) }
+    (accum, key) => ({ ...accum, [key]: formatCurrency(edenredBalance / prices[key]) }),
+    { [DEFAULT_CURRENCY]: formatCurrency(edenredBalance) }
   );
   return { balance, prices };
 };

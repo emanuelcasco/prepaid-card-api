@@ -14,14 +14,16 @@ const validateResponse = data => {
   throw Error('Edenred is not available!');
 };
 
+const truncate = text => text.slice(0, 100);
+
 exports.getBalanceByCardNumber = cardNumber =>
   axios({
     method: 'GET',
     url: `${edenredUrl}/${cardNumber}`
   })
     .then(res => {
-      logger.info(`Edenred API response: "${res.data}"`);
+      logger.info(`Edenred API response: "${truncate(res.data)}"`);
       const value = validateResponse(res.data);
       return Number(value);
     })
-    .catch(err => Promise.reject(edenredError(err)));
+    .catch(err => Promise.reject(edenredError(err.message)));

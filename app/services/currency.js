@@ -1,10 +1,18 @@
 const axios = require('axios');
-const { get } = require('lodash/fp');
+const { get, flow, over } = require('lodash/fp');
 const { currencyError } = require('../errors');
 
 const { currencyKey, currencyUrl } = require('../../config');
 
-const askPricePath = ['Realtime Currency Exchange Rate', '9. Ask Price'];
+const firstOptionPath = ['Realtime Currency Exchange Rate', '9. Ask Price'];
+const secondOptionPath = ['Realtime Currency Exchange Rate', '5. Exchange Rate'];
+const thirdOptionPath = ['Realtime Currency Exchange Rate', '8. Bid Price'];
+
+const getPrice = flow(
+  over([get(firstOptionPath), get(secondOptionPath), get(thirdOptionPath)]),
+  ([firstOption, secondOption, thirdOption]) =>
+    Number(firstOption) || Number(secondOption) || Number(thirdOption)
+);
 
 exports.convert = (from, to) =>
   axios({
@@ -18,5 +26,5 @@ exports.convert = (from, to) =>
     }
   })
     .then(res => res.data)
-    .then(get(askPricePath))
+    .then(getPrice)
     .catch(err => Promise.reject(currencyError(err)));

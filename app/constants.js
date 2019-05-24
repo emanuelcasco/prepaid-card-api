@@ -6,4 +6,4 @@ exports.CURRENCY_CACHE_KEY = 'CURRENCY';
 
 exports.DEFAULT_CURRENCY = 'ARS';
 
-exports.AVAILABLE_CURRENCIES = ['CLP', 'USD'];
+exports.AVAILABLE_CURRENCIES = ['CLP', 'USD', 'MXN', 'COP', 'BRL', 'PEN'];
