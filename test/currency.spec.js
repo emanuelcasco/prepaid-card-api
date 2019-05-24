@@ -12,7 +12,17 @@ const { formatCurrency } = require('../app/utils');
 const VALID_CREDIT_CARD_NUMBER = 999999999999;
 const BALANCE = 10000.5;
 
-const getCurrencyResponse = value => set(['Realtime Currency Exchange Rate', '9. Ask Price'], value, {});
+const getCurrencyResponse = (value, option = 'firstOption') =>
+  set(
+    {
+      firstOption: ['Realtime Currency Exchange Rate', '9. Ask Price'],
+      secondOption: ['Realtime Currency Exchange Rate', '5. Exchange Rate'],
+      thirdOption: ['Realtime Currency Exchange Rate', '8. Bid Price']
+    }[option],
+    value,
+    {}
+  );
+
 const getAvailableBalance = value => `"{\\"AvailableBalance\\":${value}}"`;
 
 const validateSuccesfullRequest = (cb, done) =>
@@ -79,5 +89,45 @@ describe('GET /balance/:creditCard', () => {
         dictum.chai(res, 'Balance');
       }, done);
     });
+  });
+
+  describe('get currency for external api', () => {
+    beforeEach(() => {
+      nock(edenredUrl)
+        .get(/.*$/)
+        .reply(200, getAvailableBalance(BALANCE));
+    });
+
+    test.each(AVAILABLE_CURRENCIES)(
+      'should take second option when first one is unavailable for: %s',
+      (currency, done) => {
+        AVAILABLE_CURRENCIES.forEach(c => {
+          nock(currencyUrl)
+            .get(new RegExp(c))
+            .reply(200, getCurrencyResponse(mockPrices[c], 'secondOption'));
+        });
+
+        validateSuccesfullRequest(res => {
+          expect(res).toBeTruthy();
+          expect(res.body.balance[currency]).toBe(formatCurrency(BALANCE / mockPrices[currency]));
+        }, done);
+      }
+    );
+
+    test.each(AVAILABLE_CURRENCIES)(
+      'should take third option when first and second ones are unavailable for: %s',
+      (currency, done) => {
+        AVAILABLE_CURRENCIES.forEach(c => {
+          nock(currencyUrl)
+            .get(new RegExp(c))
+            .reply(200, getCurrencyResponse(mockPrices[c], 'thirdOption'));
+        });
+
+        validateSuccesfullRequest(res => {
+          expect(res).toBeTruthy();
+          expect(res.body.balance[currency]).toBe(formatCurrency(BALANCE / mockPrices[currency]));
+        }, done);
+      }
+    );
   });
 });
