@@ -6,6 +6,8 @@ const { expressMiddleware, expressRequestIdMiddleware } = require('express-wolox
 const config = require('./config');
 const routes = require('./app/routes');
 const errors = require('./app/middlewares/errors');
+const subscribers = require('./app/subscribers');
+const subscriptions = require('./app/subscribers/subscriptions');
 
 const DEFAULT_BODY_SIZE_LIMIT = 1024 * 1024 * 10;
 const DEFAULT_PARAMETER_LIMIT = 10000;
@@ -34,6 +36,8 @@ app.use(expressRequestIdMiddleware);
 if (!config.isTesting) {
   app.use(expressMiddleware);
 }
+
+subscribers.init(subscriptions);
 
 routes.init(app);
 
