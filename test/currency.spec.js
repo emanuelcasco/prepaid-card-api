@@ -1,27 +1,19 @@
 const request = require('supertest');
 const nock = require('nock');
 const dictum = require('dictum.js');
-const { set } = require('lodash/fp');
 
 const app = require('../app');
 const logger = require('../app/logger');
-const { AVAILABLE_CURRENCIES } = require('../app/constants');
+const { AVAILABLE_CURRENCIES, CURRENCY_BASE, CURRENCY_SOURCE } = require('../app/constants');
 const { currencyUrl, edenredUrl } = require('../config');
 const { formatCurrency } = require('../app/utils');
+
+const FETCHED_CURRENCIES = [...AVAILABLE_CURRENCIES, CURRENCY_BASE];
 
 const VALID_CREDIT_CARD_NUMBER = 999999999999;
 const BALANCE = 10000.5;
 
-const getCurrencyResponse = (value, option = 'firstOption') =>
-  set(
-    {
-      firstOption: ['Realtime Currency Exchange Rate', '9. Ask Price'],
-      secondOption: ['Realtime Currency Exchange Rate', '5. Exchange Rate'],
-      thirdOption: ['Realtime Currency Exchange Rate', '8. Bid Price']
-    }[option],
-    value,
-    {}
-  );
+const getCurrencyResponse = quotes => ({ success: true, quotes });
 
 const getAvailableBalance = value => `"{\\"AvailableBalance\\":${value}}"`;
 
@@ -36,17 +28,19 @@ logger.info = jest.fn();
 logger.error = jest.fn();
 
 describe('GET /balance/:creditCard', () => {
-  const mockPrices = AVAILABLE_CURRENCIES.reduce((accum, currency) => {
+  const mockPrices = FETCHED_CURRENCIES.reduce((accum, currency) => {
     return { ...accum, [currency]: Math.random() };
+  }, {});
+
+  const mockPricesResponse = Object.keys(mockPrices).reduce((accum, key) => {
+    return { ...accum, [`${CURRENCY_SOURCE}${key}`]: mockPrices[key] };
   }, {});
 
   describe('succesfull cases', () => {
     beforeEach(() => {
-      AVAILABLE_CURRENCIES.forEach(currency => {
-        nock(currencyUrl)
-          .get(new RegExp(currency))
-          .reply(200, getCurrencyResponse(mockPrices[currency]));
-      });
+      nock(currencyUrl)
+        .get(/.*$/)
+        .reply(200, getCurrencyResponse(mockPricesResponse));
       nock(edenredUrl)
         .get(/.*$/)
         .reply(200, getAvailableBalance(BALANCE));
@@ -72,7 +66,8 @@ describe('GET /balance/:creditCard', () => {
     test.each(AVAILABLE_CURRENCIES)('should return expected balance for: %s', (currency, done) => {
       validateSuccesfullRequest(res => {
         expect(res).toBeTruthy();
-        expect(res.body.balance[currency]).toBe(formatCurrency(BALANCE / mockPrices[currency]));
+        const sourceCurrencyAmount = BALANCE / mockPrices[CURRENCY_BASE];
+        expect(res.body.balance[currency]).toBe(formatCurrency(sourceCurrencyAmount * mockPrices[currency]));
       }, done);
     });
 
@@ -89,45 +84,5 @@ describe('GET /balance/:creditCard', () => {
         dictum.chai(res, 'Balance');
       }, done);
     });
-  });
-
-  describe('get currency for external api', () => {
-    beforeEach(() => {
-      nock(edenredUrl)
-        .get(/.*$/)
-        .reply(200, getAvailableBalance(BALANCE));
-    });
-
-    test.each(AVAILABLE_CURRENCIES)(
-      'should take second option when first one is unavailable for: %s',
-      (currency, done) => {
-        AVAILABLE_CURRENCIES.forEach(c => {
-          nock(currencyUrl)
-            .get(new RegExp(c))
-            .reply(200, getCurrencyResponse(mockPrices[c], 'secondOption'));
-        });
-
-        validateSuccesfullRequest(res => {
-          expect(res).toBeTruthy();
-          expect(res.body.balance[currency]).toBe(formatCurrency(BALANCE / mockPrices[currency]));
-        }, done);
-      }
-    );
-
-    test.each(AVAILABLE_CURRENCIES)(
-      'should take third option when first and second ones are unavailable for: %s',
-      (currency, done) => {
-        AVAILABLE_CURRENCIES.forEach(c => {
-          nock(currencyUrl)
-            .get(new RegExp(c))
-            .reply(200, getCurrencyResponse(mockPrices[c], 'thirdOption'));
-        });
-
-        validateSuccesfullRequest(res => {
-          expect(res).toBeTruthy();
-          expect(res.body.balance[currency]).toBe(formatCurrency(BALANCE / mockPrices[currency]));
-        }, done);
-      }
-    );
   });
 });

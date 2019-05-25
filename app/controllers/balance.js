@@ -3,13 +3,15 @@ const logger = require('../logger');
 const subscribers = require('../subscribers');
 
 const { formatCurrency } = require('../utils');
-const { CURRENCY_PRICE_NAMESPACE, DEFAULT_CURRENCY } = require('../constants');
+const { CURRENCY_PRICE_NAMESPACE, CURRENCY_BASE, CURRENCY_SOURCE } = require('../constants');
 const { events: balanceEvents } = require('../subscribers/subscriptions/balance');
 
 const getBalanceByCurrency = prices => edenredBalance => {
+  const sourceCurrencyBalancce = edenredBalance / prices[CURRENCY_BASE];
+
   const balance = Object.keys(prices).reduce(
-    (accum, key) => ({ ...accum, [key]: formatCurrency(edenredBalance / prices[key]) }),
-    { [DEFAULT_CURRENCY]: formatCurrency(edenredBalance) }
+    (accum, key) => ({ ...accum, [key]: formatCurrency(sourceCurrencyBalancce * prices[key]) }),
+    { [CURRENCY_SOURCE]: formatCurrency(sourceCurrencyBalancce) }
   );
   return { balance, prices };
 };

@@ -1,30 +1,32 @@
 const axios = require('axios');
-const { get, flow, over } = require('lodash/fp');
+const logger = require('../logger');
 const { currencyError } = require('../errors');
 
 const { currencyKey, currencyUrl } = require('../../config');
 
-const firstOptionPath = ['Realtime Currency Exchange Rate', '9. Ask Price'];
-const secondOptionPath = ['Realtime Currency Exchange Rate', '5. Exchange Rate'];
-const thirdOptionPath = ['Realtime Currency Exchange Rate', '8. Bid Price'];
+const getPrices = (currencies, base, source) => quotes => {
+  return currencies.reduce((accum, currency) => ({ ...accum, [currency]: quotes[`${source}${currency}`] }), {
+    [base]: quotes[`${source}${base}`]
+  });
+};
 
-const getPrice = flow(
-  over([get(firstOptionPath), get(secondOptionPath), get(thirdOptionPath)]),
-  ([firstOption, secondOption, thirdOption]) =>
-    Number(firstOption) || Number(secondOption) || Number(thirdOption)
-);
-
-exports.convert = (from, to) =>
+exports.convert = (currencies, base, source) =>
   axios({
     method: 'GET',
     url: currencyUrl,
     params: {
-      function: 'CURRENCY_EXCHANGE_RATE',
-      from_currency: from,
-      to_currency: to,
-      apikey: currencyKey
+      access_key: currencyKey,
+      currencies: [...currencies, base].join(','),
+      source,
+      format: 1
     }
   })
-    .then(res => res.data)
-    .then(getPrice)
-    .catch(err => Promise.reject(currencyError(err)));
+    .then(({ data }) => {
+      logger.info(`Fetched currencies: ${JSON.stringify(data)}`);
+      return data.success ? data.quotes : Promise.reject(data.error.info);
+    })
+    .then(getPrices(currencies, base, source))
+    .catch(err => {
+      logger.info(`Fetched currencies: ${[...currencies, base, source]}`);
+      return Promise.reject(currencyError(err.message));
+    });
