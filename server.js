@@ -1,5 +1,5 @@
-const cluster = require('cluster');
-const os = require('os');
+// const cluster = require('cluster');
+// const os = require('os');
 
 const app = require('./app');
 const config = require('./config');
@@ -16,25 +16,27 @@ const runExpressServer = () => {
     .catch(logger.error);
 };
 
-// Check if current process is master.
-if (cluster.isMaster) {
-  // Get total CPU cores.
-  const cpuCount = os.cpus().length;
+runExpressServer();
 
-  // Spawn a worker for every core.
-  for (let j = 0; j < cpuCount; j++) {
-    cluster.fork();
-  }
-} else {
-  // This is not the master process, so we spawn the express server.
-  runExpressServer();
-}
+// // Check if current process is master.
+// if (cluster.isMaster) {
+//   // Get total CPU cores.
+//   const cpuCount = os.cpus().length;
 
-// Cluster API has a variety of events.
-// Here we are creating a new process if a worker die.
-cluster.on('exit', worker => {
-  logger.info(`Worker ${worker.id} died'`);
-  logger.info('Staring a new one...');
+//   // Spawn a worker for every core.
+//   for (let j = 0; j < cpuCount; j++) {
+//     cluster.fork();
+//   }
+// } else {
+//   // This is not the master process, so we spawn the express server.
+//   runExpressServer();
+// }
 
-  cluster.fork();
-});
+// // Cluster API has a variety of events.
+// // Here we are creating a new process if a worker die.
+// cluster.on('exit', worker => {
+//   logger.info(`Worker ${worker.id} died'`);
+//   logger.info('Staring a new one...');
+
+//   cluster.fork();
+// });
