@@ -1,8 +1,11 @@
 const axios = require('axios');
+
 const logger = require('../logger');
 const { currencyError } = require('../errors');
 
 const { currencyKey, currencyUrl } = require('../../config');
+
+// eslint-disable-next-line no-new
 
 const getPrices = (currencies, base, source) => quotes => {
   return currencies.reduce((accum, currency) => ({ ...accum, [currency]: quotes[`${source}${currency}`] }), {
@@ -10,7 +13,7 @@ const getPrices = (currencies, base, source) => quotes => {
   });
 };
 
-exports.convert = (currencies, base, source) =>
+exports.fetchPrices = (currencies, base, source) =>
   axios({
     method: 'GET',
     url: currencyUrl,

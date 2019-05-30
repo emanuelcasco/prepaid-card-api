@@ -59,6 +59,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-wolox-logger": "0.0.2",
+    "ioredis": "^4.9.5",
     "jwt-simple": "^0.5.1",
     "lodash": "^4.17.11",
     "memory-cache": "^0.2.0",
