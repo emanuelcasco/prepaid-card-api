@@ -31,11 +31,13 @@ exports.getBalanceByCardNumber = (req, res, next) => {
   const { force } = req.query;
   const prices = res[CURRENCY_PRICE_NAMESPACE];
 
+  const KEY = `${BALANCE_CACHE_KEY}:${cardNumber}`;
+
   return cachify
     .fetchOrCache({
       fn: edenredService.getBalanceByCardNumber,
       args: [cardNumber],
-      key: BALANCE_CACHE_KEY,
+      key: KEY,
       ttl: balanceCacheTime,
       force
     })
