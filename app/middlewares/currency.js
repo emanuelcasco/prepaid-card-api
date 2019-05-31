@@ -25,7 +25,7 @@ exports.fetchAvailableCurrenciesPrice = (req, res, next) => {
       ttl: currencyCacheTime
     })
     .then(({ data, cache }) => {
-      logger.info(`Currencies fetched from ${cache ? 'cache' : 'external service and cached'}.`);
+      logger.info(`Currencies fetched from ${cache ? 'cache' : 'external service and cached'}!`);
       logger.info(`Currencies value: ${JSON.stringify(data)}`);
 
       // Save available currencies prices in response and cache

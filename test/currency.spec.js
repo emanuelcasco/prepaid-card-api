@@ -4,9 +4,25 @@ const dictum = require('dictum.js');
 
 const app = require('../app');
 const logger = require('../app/logger');
-const { AVAILABLE_CURRENCIES, CURRENCY_BASE, CURRENCY_SOURCE } = require('../app/constants');
-const { currencyUrl, edenredUrl } = require('../config');
+
 const { formatCurrency } = require('../app/utils');
+const { currencyUrl, edenredUrl } = require('../config');
+const { AVAILABLE_CURRENCIES, CURRENCY_BASE, CURRENCY_SOURCE } = require('../app/constants');
+
+const mockRedisSet = jest.fn();
+const mockRedisGet = jest.fn();
+
+jest.mock('../app/libs/redis', () => ({
+  createRedisClient: () => ({
+    get: key => mockRedisSet(key),
+    set: (key, value, ex, ttl) => mockRedisGet(key, value, ex, ttl)
+    // get: jest.fn().mockResolvedValue(null),
+    // set: jest.fn().mockResolvedValue()
+  })
+}));
+
+logger.info = jest.fn();
+logger.error = jest.fn();
 
 const FETCHED_CURRENCIES = [...AVAILABLE_CURRENCIES, CURRENCY_BASE];
 
@@ -24,10 +40,9 @@ const validateSuccesfullRequest = (cb, done) =>
     .then(() => done())
     .catch(done);
 
-logger.info = jest.fn();
-logger.error = jest.fn();
-
 describe('GET /balance/:creditCard', () => {
+  mockRedisGet.mockResolvedValue(null);
+  mockRedisSet.mockResolvedValue();
   const mockPrices = FETCHED_CURRENCIES.reduce((accum, currency) => {
     return { ...accum, [currency]: Math.random() };
   }, {});
