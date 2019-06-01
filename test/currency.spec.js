@@ -16,8 +16,6 @@ jest.mock('../app/libs/redis', () => ({
   createRedisClient: () => ({
     get: key => mockRedisSet(key),
     set: (key, value, ex, ttl) => mockRedisGet(key, value, ex, ttl)
-    // get: jest.fn().mockResolvedValue(null),
-    // set: jest.fn().mockResolvedValue()
   })
 }));
 
