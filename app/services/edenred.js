@@ -19,7 +19,8 @@ const truncate = text => text.slice(0, 100);
 exports.getBalanceByCardNumber = cardNumber =>
   axios({
     method: 'GET',
-    url: `${edenredUrl}/${cardNumber}`
+    url: `${edenredUrl}/${cardNumber}`,
+    timeout: 10000
   })
     .then(res => {
       logger.info(`Edenred API response: "${truncate(res.data)}"`);
