@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "edenred-api",
   "engines": {
-    "node": "10.14.1",
+    "node": "12.6.0",
     "npm": "6.4.1"
   },
   "scripts": {
@@ -61,7 +61,7 @@
     "express-wolox-logger": "0.0.2",
     "ioredis": "^4.9.5",
     "jwt-simple": "^0.5.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "memory-cache": "^0.2.0",
     "morgan": "^1.9.1",
     "moxios": "^0.4.0",
