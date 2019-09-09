@@ -8,6 +8,7 @@ const { formatCurrency } = require('../utils');
 // const { events: balanceEvents } = require('../subscribers/subscriptions/balance');
 
 const {
+  AVAILABLE_CURRENCIES,
   BALANCE_CACHE_KEY,
   CURRENCY_PRICE_NAMESPACE,
   CURRENCY_BASE,
@@ -24,6 +25,12 @@ const getBalanceByCurrency = prices => edenredBalance => {
     { [CURRENCY_SOURCE]: formatCurrency(sourceCurrencyBalancce) }
   );
   return { balance, prices };
+};
+
+exports.getAvailableCurrencies = (req, res) => {
+  const availableCurrencies = [CURRENCY_BASE, CURRENCY_SOURCE, ...AVAILABLE_CURRENCIES];
+
+  return res.status(200).send(availableCurrencies);
 };
 
 exports.getBalanceByCardNumber = (req, res, next) => {
