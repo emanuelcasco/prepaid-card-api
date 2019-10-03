@@ -59,9 +59,6 @@
     },
     "testMatch": [
       "**/test/**/*.spec.ts?(x)"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/test/setup.ts"
     ]
   },
   "dependencies": {
