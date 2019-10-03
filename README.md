@@ -1,6 +1,6 @@
-# edenred-api
+# typescript-base
 
-edenred-api
+Example base for typescript projects
 
 ## First steps
 
@@ -11,6 +11,27 @@ Nvm approach is preferred.
 #### Getting dependencies
 Run ```npm install``` or ```yarn``` from rootpath of the project.
 
+
+#### Database configuration
+Before running the app, make sure you have [postgresql installed](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04) and a db created, to create it run the following steps inside a psql terminal:
+1. CREATE DATABASE db_project_name;
+2. \c db_project_name
+3. CREATE ROLE "project_name" LOGIN CREATEDB PASSWORD 'project_name';
+
+Then, set in `.env` some variables:
+- DB_HOST=localhost
+- DB_PORT=5432
+- DB_USERNAME=project_name
+- DB_PASSWORD=project_name
+- DB_NAME=db_project_name
+- DB_NAME_DEV=db_project_name_dev
+- DB_NAME_TEST=db_project_name_test
+
+### Migrations
+
+To create a migration, run `./node_modules/.bin/sequelize migration:create --name="my-migration-name" --config ./migrations/config.js --migrations-path ./migrations/migrations`.
+
+To run them, execute `npm run migrations`.
 
 #### Starting your app
 Now, to start your app run ```npm start``` in the rootpath of the project. Then access your app at **localhost:port**. The port is logged in the console where you ran the start script.
@@ -56,7 +77,32 @@ testing database each time you have new ones, you can do this by running the com
 Once you have all the above done you can run your tests with the following command: `npm test`. For more information refeer to the documentation of [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/).
 
 #### Debugging
-As we know, a NodeJS application is not something easy to debug and because of that we've added the `--inspect` flag to make it simpler. Chrome DevTools will get started when running your app using the start script (`npm start`), making your debugging easier.
+
+In order to debug our Node.js application, we enable 'sourceMap' in `tsconfig.json`, this compiler option generates corresponding `.map` files from original Javascipt counterpart. This change is mandatory to attach a debugger, otherwise it wouldn't be able to match transpiled files with their originals.
+
+In VSCode, you will need to add an `./.vscode/launch.json` file in order to launch the debugger. You can use the following:
+
+```json
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/server.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "restart": true,
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    }
+  ]
+}
+```
 
 #### REPL console
 We can use a node console with `npm run console`. There your service objects are exposed as _servicename_ + "Service". Let's suppose that we have a service `users` which has a function `getAll`. In your console you can call `usersService.getAll()` and see the result. Note that this works also with functions that return promises! To exit the console use `.exit`.
@@ -87,7 +133,7 @@ This project is maintained by [Wolox](https://github.com/wolox) and it was writt
 
 ## License
 
-**edenred-api** is available under the MIT [license](LICENSE.md).
+**typescript-base** is available under the MIT [license](LICENSE.md).
 
     Copyright (c) 2019 Wolox
 
