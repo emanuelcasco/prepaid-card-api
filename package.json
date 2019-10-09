@@ -24,8 +24,8 @@
     "pretest": "npm run lint",
     "start": "npm run build && node ./dist/server.js",
     "test": "npm run test-basic -- --runInBand",
-    "test-basic": "NODE_ENV=testing jest --forceExit --silent --detectOpenHandles",
-    "test-inspect": "NODE_ENV=testing node --inspect --debug-brk --detectOpenHandles jest"
+    "test-basic": "NODE_ENV=testing jest --forceExit --verbose --silent --detectOpenHandles",
+    "test-inspect": "NODE_ENV=testing node --inspect --debug-brk jest --detectOpenHandles"
   },
   "cacheDirectories": [
     "node_modules"
@@ -57,9 +57,7 @@
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },
-    "testMatch": [
-      "**/test/**/*.spec.ts?(x)"
-    ]
+    "testRegex": ["(/__tests__/.*|(\\.|/)(test|spec))\\.ts?$"]
   },
   "dependencies": {
     "@types/axios": "^0.14.0",
@@ -71,7 +69,8 @@
     "express-wolox-logger": "0.0.2",
     "ioredis": "^4.14.1",
     "jwt-simple": "^0.5.1",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "nock": "^11.3.5"
   },
   "devDependencies": {
     "@types/babel-core": "^6.25.6",
@@ -85,6 +84,7 @@
     "@types/jest": "^24.0.18",
     "@types/jwt-simple": "^0.5.33",
     "@types/morgan": "^1.7.35",
+    "@types/nock": "^11.1.0",
     "@types/node": "^12.6.2",
     "@types/supertest": "^2.0.8",
     "@types/umzug": "^2.2.2",

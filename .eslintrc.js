@@ -28,6 +28,7 @@ module.exports = {
     __DEV__: true
   },
   rules: {
+    "curly": 0,
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/array-type": "array",
     "@typescript-eslint/class-name-casing": ["error", { "allowUnderscorePrefix": true }],
