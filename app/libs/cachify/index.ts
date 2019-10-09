@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Redis } from 'ioredis';
-
-import createRedisClient from '../redis';
+import createRedisClient, { IRedis } from '../redis';
 
 export interface ICacheInput<TypeResult> {
   fn(...args: any[]): Promise<TypeResult>;
@@ -19,7 +17,7 @@ export interface ICacheOutput<TypeResult> {
 }
 
 class Cachify {
-  redis: Redis;
+  redis: IRedis;
 
   constructor(redisUrl: string) {
     this.redis = createRedisClient(redisUrl);

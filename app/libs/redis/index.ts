@@ -22,4 +22,6 @@ const createRedisClient = (redisURL: string): Redis => {
   return redis;
 };
 
+export type IRedis = Redis;
+
 export default createRedisClient;

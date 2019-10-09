@@ -7,7 +7,7 @@ import config from '../../config';
 
 const { baseURL, apiKey } = config.currency;
 
-interface IExtCurrenciesResponse {
+export interface IExtCurrenciesResponse {
   success: boolean;
   error?: { info: string };
   quotes?: { [currencyLabel: string]: number };
