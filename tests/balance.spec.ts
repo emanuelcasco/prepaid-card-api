@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import request, { Response } from 'supertest';
 import nock from 'nock';
 
@@ -60,7 +57,7 @@ describe('GET /balance/:creditCardNumber', () => {
         .reply(200, getAvailableBalance(BALANCE));
       request(app)
         .get(`/balance/${DEFAULT_CREDIT_CARD_NUMBER}`)
-        .end((error: any, res: Response) => {
+        .end((error, res) => {
           if (error) done(error);
           response = res;
           done();
