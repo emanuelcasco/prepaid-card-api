@@ -8,7 +8,7 @@ import config from '../../config';
 const { baseURL } = config.balance;
 
 const serializeExternalResponse = (input: string): number => {
-  const regexp = /AvailableBalance|\d+.\d+/g;
+  const regexp = /AvailableBalance|(\d+(\.\d+)?)|(\.\d+)/g;
   const matched = input.match(regexp);
 
   if (matched) {
@@ -31,7 +31,9 @@ export const balance = async (creditCardNumber: number): Promise<number> => {
 
     logger.info(`Edenred API response: "${data.slice(0, 100)}"`);
 
-    return serializeExternalResponse(data);
+    const value = serializeExternalResponse(data);
+
+    return value;
   } catch (error) {
     return Promise.reject(externalError(error.message));
   }
