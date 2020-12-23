@@ -17,7 +17,7 @@ const serializeExternalResponse = (input: string): number => {
       return Number(value);
     }
   }
-  throw Error('Edenred is not available!');
+  throw Error('Balance is not available!');
 };
 
 export const balance = async (creditCardNumber: number): Promise<number> => {
@@ -29,7 +29,7 @@ export const balance = async (creditCardNumber: number): Promise<number> => {
       timeout: DEFAULT_TIMEOUT
     });
 
-    logger.info(`Edenred API response: "${data.slice(0, 100)}"`);
+    logger.info(`Balance API response: "${data.slice(0, 100)}"`);
 
     const value = serializeExternalResponse(data);
 

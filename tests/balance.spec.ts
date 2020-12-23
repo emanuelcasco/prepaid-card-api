@@ -8,7 +8,7 @@ import { IExtCurrenciesResponse } from '../app/services/currencies';
 import { CURRENCY_BASE, CURRENCY_SOURCE, AVAILABLE_CURRENCIES } from '../app/constants';
 import { formatMoney } from '../app/helpers/formater';
 
-const edenredURL = config.balance.baseURL;
+const balanceURL = config.balance.baseURL;
 const currencyURL = config.currency.baseURL;
 
 const DEFAULT_CREDIT_CARD_NUMBER = 9999_9999_9999;
@@ -52,7 +52,7 @@ describe('GET /balance/:creditCardNumber', () => {
       nock(currencyURL)
         .get(/.*$/)
         .reply(200, getCurrencyResponse(mockPricesResponse));
-      nock(edenredURL)
+      nock(balanceURL)
         .get(/.*$/)
         .reply(200, getAvailableBalance(BALANCE));
       request(app)

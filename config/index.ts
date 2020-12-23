@@ -37,7 +37,7 @@ const config: IConfig = {
     }
   },
   balance: {
-    baseURL: process.env.EDENRED_API_URL,
+    baseURL: process.env.BALANCE_API_URL,
     cache: {
       namespace: 'BALANCE_API',
       key: 'BALANCE',

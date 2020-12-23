@@ -1,7 +1,7 @@
-import edenred from './edenred';
+import balance from './balance';
 import currencies from './currencies';
 
 export default {
-  edenred,
+  balance,
   currencies
 };

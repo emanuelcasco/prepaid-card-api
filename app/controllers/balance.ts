@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import logger from '../logger';
 import { CURRENCY_BASE, CURRENCY_SOURCE } from '../constants';
 import Cachify, { ICacheOutput } from '../libs/cachify';
-import edenredService from '../services/edenred';
+import balanceService from '../services/balance';
 import currenciesService, { IAvailableCurrencies, ICurrenciesPrices } from '../services/currencies';
 import { formatMoney } from '../helpers/formater';
 import config from '../../config';
@@ -20,8 +20,8 @@ const redisBaseUrl = config.redis.baseURL;
 
 const cachify = new Cachify(redisBaseUrl);
 
-const mapBalanceByCurrency = (edenredBalance: number, prices: ICurrenciesPrices): ICurrentBalance => {
-  const sourceCurrencyBalancce = edenredBalance / prices[CURRENCY_BASE];
+const mapBalanceByCurrency = (balanceBalance: number, prices: ICurrenciesPrices): ICurrentBalance => {
+  const sourceCurrencyBalancce = balanceBalance / prices[CURRENCY_BASE];
 
   const balance = Object.keys(prices).reduce(
     (accum, key) => ({ ...accum, [key]: formatMoney(sourceCurrencyBalancce * prices[key]) }),
@@ -43,7 +43,7 @@ export const getCurrentBalance = async (
       ICacheOutput<ICurrenciesPrices>
     ] = await Promise.all([
       cachify.fetchOrCache({
-        fn: edenredService.balance,
+        fn: balanceService.balance,
         args: [creditCardNumber],
         key: `${balanceCacheConfig.key}:${creditCardNumber}`,
         ttl: balanceCacheConfig.ttl
